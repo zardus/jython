@@ -3,8 +3,9 @@
 
 package org.python.core;
 
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+//import java.nio.file.FileSystems;
+//import java.nio.file.Path;
+import java.io.File;
 
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedType;
@@ -58,12 +59,9 @@ public class PyNullImporter extends PyObject {
             return false;
         }
         try {
-            Path path = FileSystems.getDefault().getPath(pathStr);
-            if (!path.isAbsolute()) {
-                path = FileSystems.getDefault().getPath(Py.getSystemState().getCurrentWorkingDir(), pathStr);
-            }
-            return path.toFile().isDirectory();
-        } catch (java.nio.file.InvalidPathException ex) {
+            File f = (new File(pathStr)).getAbsoluteFile();
+            return f.isDirectory();
+        } catch (Exception ex) {
             return false;
         }
     }
