@@ -345,7 +345,7 @@ public class PyUnicode extends PyString implements Iterable {
          * may be half a supplementary character, or a lone surrogate: we'll find out later.
          */
         for (p = 0; p < n; p++) {
-            if (Character.isSurrogate(string.charAt(p))) {
+            if (Character.isHighSurrogate(string.charAt(p)) || Character.isLowSurrogate(string.charAt(p))) {
                 break;
             }
         }
@@ -437,7 +437,7 @@ public class PyUnicode extends PyString implements Iterable {
             if (p < n) {
                 // We are at the last UTF-16 unit in string. Any surrogate here is an error.
                 char c = string.charAt(p++);
-                if (Character.isSurrogate(c)) {
+                if (Character.isHighSurrogate(c) || Character.isLowSurrogate(c)) {
                     throw unpairedSurrogate(p - 1, c);
                 }
                 // Advance the code point index
