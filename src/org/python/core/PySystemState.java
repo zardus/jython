@@ -45,6 +45,7 @@ import org.python.expose.ExposedGet;
 import org.python.expose.ExposedType;
 import org.python.modules.Setup;
 import org.python.util.Generic;
+import org.python.core.PyAttributeDeleted;
 
 /**
  * The "sys" module.
@@ -1859,37 +1860,6 @@ class PySystemStateFunctions extends PyBuiltinFunctionSet {
             default:
                 throw info.unexpectedCall(3, false);
         }
-    }
-}
-
-
-/**
- * Value of a class or instance variable when the corresponding attribute is deleted. Used only in
- * PySystemState for now.
- */
-@Untraversable
-class PyAttributeDeleted extends PyObject {
-
-    final static PyAttributeDeleted INSTANCE = new PyAttributeDeleted();
-
-    private PyAttributeDeleted() {}
-
-    @Override
-    public String toString() {
-        return "";
-    }
-
-    @Override
-    public Object __tojava__(Class c) {
-        if (c == PyObject.class) {
-            return this;
-        }
-        // we can't quite "delete" non-PyObject attributes; settle for
-        // null or nothing
-        if (c.isPrimitive()) {
-            return Py.NoConversion;
-        }
-        return null;
     }
 }
 

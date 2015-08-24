@@ -4,6 +4,7 @@ package org.python.core;
 import java.io.OutputStream;
 
 import org.python.core.util.StringUtil;
+import org.python.core.PyAttributeDeleted;
 
 public class StdoutWrapper extends OutputStream {
     protected String name;

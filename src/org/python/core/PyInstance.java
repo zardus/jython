@@ -8,6 +8,7 @@ import org.python.expose.MethodType;
 
 import org.python.core.finalization.FinalizablePyObject;
 import org.python.core.finalization.FinalizeTrigger;
+import org.python.core.JavaFunc;
 
 /**
  * An instance of a classic Python class.

@@ -38,6 +38,7 @@ import org.python.core.Traverseproc;
 import org.python.core.Visitproc;
 import org.python.modules.posix.PosixModule;
 import org.python.util.Generic;
+import org.python.core.JavaFunc;
 
 /** Builtin types that are used to setup PyObject.
  *
@@ -2403,46 +2404,5 @@ class JavaCode extends PyCode implements Traverseproc {
     @Override
     public boolean refersDirectlyTo(PyObject ob) {
         return ob != null && ob == func;
-    }
-}
-
-/**
- * A function object wrapper for a java method which comply with the
- * PyArgsKeywordsCall standard.
- */
-@Untraversable
-class JavaFunc extends PyObject {
-
-    Method method;
-
-    public JavaFunc(Method method) {
-        this.method = method;
-    }
-
-    @Override
-    public PyObject __call__(PyObject[] args, String[] kws) {
-        Object[] margs = new Object[]{args, kws};
-        try {
-            return Py.java2py(method.invoke(null, margs));
-        } catch (Throwable t) {
-            throw Py.JavaError(t);
-        }
-    }
-
-    @Override
-    public PyObject _doget(PyObject container) {
-        return _doget(container, null);
-    }
-
-    @Override
-    public PyObject _doget(PyObject container, PyObject wherefound) {
-        if (container == null) {
-            return this;
-        }
-        return new PyMethod(this, container, wherefound);
-    }
-
-    public boolean _doset(PyObject container) {
-        throw Py.TypeError("java function not settable: " + method.getName());
     }
 }
