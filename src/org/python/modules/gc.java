@@ -850,7 +850,7 @@ public class gc {
             critics.removeAll(cyclicCritics);
             Set<PyObject> criticReachablePool = findReachables(critics);
             //to avoid concurrent modification:
-            ArrayList<PyObject> criticReachables = new ArrayList<>();
+            ArrayList<PyObject> criticReachables = new ArrayList<PyObject>();
             FinalizeTrigger fn;
             if (delayedFinalizationMode == MARK_REACHABLE_CRITICS) {
                 for (PyObject obj: criticReachablePool) {
@@ -992,10 +992,10 @@ public class gc {
 
     private static void resumeDelayedFinalization() {
         if (delayedFinalizables == null) {
-            delayedFinalizables = new IdentityHashMap<>();
+            delayedFinalizables = new IdentityHashMap<PyObject, PyObject>();
         }
         if (resurrectionCritics == null) {
-            resurrectionCritics = new IdentityHashMap<>();
+            resurrectionCritics = new IdentityHashMap<PyObject, PyObject>();
         }
         //add post-finalization process (and cancel pending suspension process if any)
         try {
@@ -1122,7 +1122,7 @@ public class gc {
                 }
                 return;
             } catch (NullPointerException npe) {
-                preFinalizationProcess = new ArrayList<>(1);
+                preFinalizationProcess = new ArrayList<Runnable>(1);
             }
         }
     }
@@ -1164,7 +1164,7 @@ public class gc {
                 }
                 return;
             } catch (NullPointerException npe) {
-                preFinalizationProcessRemove = new ArrayList<>(1);
+                preFinalizationProcessRemove = new ArrayList<Runnable>(1);
             }
         }
     }
@@ -1221,7 +1221,7 @@ public class gc {
                 }
                 return;
             } catch (NullPointerException npe) {
-                postFinalizationProcess = new ArrayList<>(1);
+                postFinalizationProcess = new ArrayList<Runnable>(1);
             }
         }
     }
@@ -1263,7 +1263,7 @@ public class gc {
                 }
                 return;
             } catch (NullPointerException npe) {
-                postFinalizationProcessRemove = new ArrayList<>(1);
+                postFinalizationProcessRemove = new ArrayList<Runnable>(1);
             }
         }
     }
@@ -1373,7 +1373,7 @@ public class gc {
             }
         }
         if (gcTrash == null) {
-            gcTrash = new ReferenceQueue<>();
+            gcTrash = new ReferenceQueue<Object>();
         }
         while (true) {
             try {
@@ -1769,7 +1769,7 @@ public class gc {
                 // of them are in an invalid state then and cannot directly obtain
                 // their string representation (would produce overflow errors and
                 // such bad stuff). So we do it here...
-                List<WeakReferenceGC> lst = new ArrayList<>();
+                List<WeakReferenceGC> lst = new ArrayList<WeakReferenceGC>();
                 for (WeakReferenceGC wr: monitoredObjects) {
                     if (wr.str == null) {
                         lst.add(wr);
@@ -1882,7 +1882,7 @@ public class gc {
 
             //Typically this line causes a gc-run:
             cyclicLookup = removeNonCyclicWeakRefs(monitoredObjects);
-            cyclic = new HashSet<>(cyclicLookup.values());
+            cyclic = new HashSet<WeakReferenceGC>(cyclicLookup.values());
             if (debugStat) {
                 writeDebug("gc", "collecting generation x...");
                 writeDebug("gc", "objects in each generation: "+cyclic.size());
@@ -2164,7 +2164,7 @@ public class gc {
         }
         List<WeakReferenceGC> collectBuffer = null;
         if (needsCollectBuffer()) {
-            collectBuffer = new ArrayList<>();
+            collectBuffer = new ArrayList<WeakReferenceGC>();
         }
         while (outstandingNotifications > 0) {
             try {
@@ -2235,12 +2235,12 @@ public class gc {
 
     private static List<WeakReferenceGC> collectSyncViaSentinel(int[] stat, Set<WeakReferenceGC> cyclic) {
         WeakReference<GCSentinel> sentRef =
-                new WeakReference<>(new GCSentinel(Thread.currentThread()), gcTrash);
+                new WeakReference<GCSentinel>(new GCSentinel(Thread.currentThread()), gcTrash);
         Reference<? extends Object> trash;
         System.gc();
         List<WeakReferenceGC> collectBuffer = null;
         if (needsCollectBuffer()) {
-            collectBuffer = new ArrayList<>();
+            collectBuffer = new ArrayList<WeakReferenceGC>();
         }
         long removeTime;
         try {
@@ -2507,7 +2507,7 @@ public class gc {
             }
         }
         IdentityHashMap<PyObject, WeakReferenceGC> tmp;
-        IdentityHashMap<PyObject, WeakReferenceGC> toProcess = new IdentityHashMap<>();
+        IdentityHashMap<PyObject, WeakReferenceGC> toProcess = new IdentityHashMap<PyObject, WeakReferenceGC>();
         //We complete pools[0] with all reachable objects.
         for (WeakReferenceGC ref: pools[0].values()) {
             traverse((PyObject) ref.get(), ReachableFinderWeakRefs.defaultInstance, pools);
@@ -2569,7 +2569,7 @@ public class gc {
         pools[0] = new IdentityHashMap<PyObject, PyObject>();
         pools[1] = new IdentityHashMap<PyObject, PyObject>();
         IdentityHashMap<PyObject, PyObject> tmp;
-        IdentityHashMap<PyObject, PyObject> toProcess = new IdentityHashMap<>();
+        IdentityHashMap<PyObject, PyObject> toProcess = new IdentityHashMap<PyObject, PyObject>();
         
         //We complete pools[0] with all reachable objects.
         //Note the difference to the implementation in removeNonCyclic.
@@ -2626,7 +2626,7 @@ public class gc {
             }
         }
         IdentityHashMap<PyObject, PyObject> tmp;
-        IdentityHashMap<PyObject, PyObject> toProcess = new IdentityHashMap<>();
+        IdentityHashMap<PyObject, PyObject> toProcess = new IdentityHashMap<PyObject, PyObject>();
         
         //We complete pools[0] with all reachable objects.
         for (PyObject obj: pools[0].keySet()) {
@@ -2801,7 +2801,7 @@ public class gc {
                         !reflectionWarnedClasses.contains(ob.getClass())) {
                     if ((gcFlags & INSTANCE_TRAVERSE_BY_REFLECTION_WARNING) == 0) {
                         if (reflectionWarnedClasses == null) {
-                            reflectionWarnedClasses = new HashSet<>();
+                            reflectionWarnedClasses = new HashSet<Class<? extends PyObject>>();
                         }
                         reflectionWarnedClasses.add(ob.getClass());
                         justAddedWarning = true;
@@ -2829,7 +2829,7 @@ public class gc {
                 if ((gcFlags & INSTANCE_TRAVERSE_BY_REFLECTION_WARNING) == 0 &&
                         !justAddedWarning) {
                     if (reflectionWarnedClasses == null) {
-                        reflectionWarnedClasses = new HashSet<>();
+                        reflectionWarnedClasses = new HashSet<Class<? extends PyObject>>();
                     }
                     reflectionWarnedClasses.add(ob.getClass());
                 }
@@ -2870,7 +2870,7 @@ public class gc {
      * </p>
      */
     public static int traverseByReflection(Object ob, Visitproc visit, Object arg) {
-        IdentityHashMap<Object, Object> alreadyTraversed = new IdentityHashMap<>();
+        IdentityHashMap<Object, Object> alreadyTraversed = new IdentityHashMap<Object, Object>();
         alreadyTraversed.put(ob, ob);
         return traverseByReflectionIntern(ob, alreadyTraversed, visit, arg);
     }
@@ -2978,7 +2978,7 @@ public class gc {
         if (fieldCount == 0) {
             return false;
         }
-        IdentityHashMap<Class<?>, Class<?>> alreadyChecked = new IdentityHashMap<>();
+        IdentityHashMap<Class<?>, Class<?>> alreadyChecked = new IdentityHashMap<Class<?>, Class<?>>();
         alreadyChecked.put(cls, cls);
         cls2 = cls;
         Class<?> ft;

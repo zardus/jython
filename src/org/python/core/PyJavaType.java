@@ -926,7 +926,7 @@ public class PyJavaType extends PyType {
      *         injected methods.
      */
     private static Map<Class<?>, PyBuiltinMethod[]> buildCollectionProxies() {
-        final Map<Class<?>, PyBuiltinMethod[]> proxies = new HashMap<>();
+        final Map<Class<?>, PyBuiltinMethod[]> proxies = new HashMap<Class<?>, PyBuiltinMethod[]>();
 
         PyBuiltinMethodNarrow iterableProxy = new PyBuiltinMethodNarrow("__iter__") {
             @Override
@@ -986,7 +986,7 @@ public class PyJavaType extends PyType {
     }
 
     private static Map<Class<?>, PyBuiltinMethod[]> buildPostCollectionProxies() {
-        final Map<Class<?>, PyBuiltinMethod[]> postProxies = new HashMap<>();
+        final Map<Class<?>, PyBuiltinMethod[]> postProxies = new HashMap<Class<?>, PyBuiltinMethod[]>();
         postProxies.put(List.class, JavaProxyList.getPostProxyMethods());
         postProxies.put(Map.class, JavaProxyMap.getPostProxyMethods());
         postProxies.put(Set.class, JavaProxySet.getPostProxyMethods());

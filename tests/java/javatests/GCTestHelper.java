@@ -47,7 +47,7 @@ public class GCTestHelper {
     public static class PyReflectionTraversed extends PyObject {
         PyObject referent1;
         PyObject[] refArray = new PyObject[3];
-        List<Object> refList = new ArrayList<>();
+        List<Object> refList = new ArrayList<Object>();
         PyObject referent2;
 
         public PyReflectionTraversed() {

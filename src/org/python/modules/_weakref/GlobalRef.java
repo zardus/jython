@@ -47,9 +47,9 @@ public class GlobalRef extends WeakReference<PyObject> {
      */
     protected boolean cleared = false;
 
-    private List<WeakReference<AbstractReference>> references = new ArrayList<>();
+    private List<WeakReference<AbstractReference>> references = new ArrayList<WeakReference<AbstractReference>>();
 
-    private static ReferenceQueue<PyObject> referenceQueue = new ReferenceQueue<>();
+    private static ReferenceQueue<PyObject> referenceQueue = new ReferenceQueue<PyObject>();
 
     private static Thread reaperThread;
     private static ReentrantReadWriteLock reaperLock = new ReentrantReadWriteLock();
@@ -63,7 +63,7 @@ public class GlobalRef extends WeakReference<PyObject> {
     }
 
     public synchronized void add(AbstractReference ref) {
-        WeakReference<AbstractReference> r = new WeakReference<>(ref);
+        WeakReference<AbstractReference> r = new WeakReference<AbstractReference>(ref);
         references.add(r);
     }
 
@@ -138,7 +138,7 @@ public class GlobalRef extends WeakReference<PyObject> {
      */
     private static void delayedCallback(GlobalRef cl) {
         if (delayedCallbacks == null) {
-            delayedCallbacks = new ArrayList<>();
+            delayedCallbacks = new ArrayList<GlobalRef>();
         }
         synchronized (delayedCallbacks) {
             delayedCallbacks.add(cl);
@@ -160,7 +160,7 @@ public class GlobalRef extends WeakReference<PyObject> {
     }
 
     synchronized public PyList refs() {
-        List<AbstractReference> list = new ArrayList<>();
+        List<AbstractReference> list = new ArrayList<AbstractReference>();
         for (int i = references.size() - 1; i >= 0; i--) {
             AbstractReference r = getReferenceAt(i);
             if (r == null) {

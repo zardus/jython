@@ -104,7 +104,7 @@ class JavaProxySet {
 
         protected Set difference(Collection<Object> other) {
             Set<Object> selfSet = asSet();
-            Set<Object> diff = new HashSet<>(selfSet);
+            Set<Object> diff = new HashSet<Object>(selfSet);
             diff.removeAll(other);
             return diff;
         }
@@ -115,7 +115,7 @@ class JavaProxySet {
 
         protected Set intersect(Collection[] others) {
             Set<Object> selfSet = asSet();
-            Set<Object> intersection = new HashSet<>(selfSet);
+            Set<Object> intersection = new HashSet<Object>(selfSet);
             for (Collection other : others) {
                 intersection.retainAll(other);
             }
@@ -131,7 +131,7 @@ class JavaProxySet {
 
         protected Set union(Collection<Object> other) {
             Set<Object> selfSet = asSet();
-            Set<Object> u = new HashSet<>(selfSet);
+            Set<Object> u = new HashSet<Object>(selfSet);
             u.addAll(other);
             return u;
         }
@@ -142,16 +142,16 @@ class JavaProxySet {
 
         protected Set symDiff(Collection<Object> other) {
             Set<Object> selfSet = asSet();
-            Set<Object> symDiff = new HashSet<>(selfSet);
+            Set<Object> symDiff = new HashSet<Object>(selfSet);
             symDiff.addAll(other);
-            Set<Object> intersection = new HashSet<>(selfSet);
+            Set<Object> intersection = new HashSet<Object>(selfSet);
             intersection.retainAll(other);
             symDiff.removeAll(intersection);
             return symDiff;
         }
         protected void symDiffUpdate(Collection<Object> other) {
             Set<Object> selfSet = asSet();
-            Set<Object> intersection = new HashSet<>(selfSet);
+            Set<Object> intersection = new HashSet<Object>(selfSet);
             intersection.retainAll(other);
             selfSet.addAll(other);
             selfSet.removeAll(intersection);
@@ -194,7 +194,7 @@ class JavaProxySet {
         Collection<Object> items;
         if (isPySet(obj)) {
             Set<PyObject> otherPySet = ((BaseSet)obj).getSet();
-            items = new ArrayList<>(otherPySet.size());
+            items = new ArrayList<Object>(otherPySet.size());
             for (PyObject pyobj : otherPySet) {
                 items.add(pyobj.__tojava__(Object.class));
             }
@@ -222,7 +222,7 @@ class JavaProxySet {
                 Collection<Object> jCollection = (Collection<Object>) oj;
                 items = jCollection;
             } else if (oj instanceof Iterable) {
-                items = new HashSet<>();
+                items = new HashSet<Object>();
                 for (Object item: (Iterable) oj) {
                     items.add(item);
                 }
@@ -232,7 +232,7 @@ class JavaProxySet {
             }
         } else {
             // This step verifies objects are hashable
-            items = new HashSet<>();
+            items = new HashSet<Object>();
             for (PyObject pyobj : obj.asIterable()) {
                 items.add(pyobj.__tojava__(Object.class));
             }
@@ -256,7 +256,7 @@ class JavaProxySet {
         if (objs.length == 1) {
             return getJavaCollection(objs[0]);
         }
-        Set<Object> items = new HashSet<>();
+        Set<Object> items = new HashSet<Object>();
         for (PyObject obj : objs) {
             Object oj = obj.getJavaProxy();
             if (oj != null) {
@@ -472,7 +472,7 @@ class JavaProxySet {
     private static final SetMethod deepcopyOverrideProxy = new SetMethod("__deepcopy__", 1) {
         @Override
         public PyObject __call__(PyObject memo) {
-            Set<Object> newSet = new HashSet<>();
+            Set<Object> newSet = new HashSet<Object>();
             for (Object obj : asSet()) {
                 PyObject pyobj = Py.java2py(obj);
                 PyObject newobj = pyobj.invoke("__deepcopy__", memo);

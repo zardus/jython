@@ -75,7 +75,7 @@ public abstract class PyIterator extends PyObject implements Iterable<Object>, T
             return iterator();
         }
         if (c.isAssignableFrom(Collection.class)) {
-            List<Object> list = new ArrayList<>();
+            List<Object> list = new ArrayList<Object>();
             for (Object obj : this) {
                 list.add(obj);
             }

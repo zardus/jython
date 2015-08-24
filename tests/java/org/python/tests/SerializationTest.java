@@ -64,7 +64,7 @@ public class SerializationTest extends TestCase {
         assertRoundtrip(Py.newLong(47));
         assertRoundtrip(Py.newString("Jython: Python for the Java Platform"));
         assertRoundtrip(Py.newUnicode("Drink options include \uD83C\uDF7A, \uD83C\uDF75, \uD83C\uDF77, and \u2615"));
-        Map<PyObject, PyObject> map = new HashMap<>();
+        Map<PyObject, PyObject> map = new HashMap<PyObject, PyObject>();
         map.put(Py.newString("OEIS interesting number"), Py.newInteger(14228));
         map.put(Py.newString("Hardy-Ramanujan number"), Py.newInteger(1729));
         assertRoundtrip(new PyDictionary(map));
