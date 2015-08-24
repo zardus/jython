@@ -2693,22 +2693,13 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * @throws NumberFormatException if not a valid non-numeric indicator
      */
     private static double atofSpecials(String s) throws NumberFormatException {
-        switch (s.toLowerCase()) {
-            case "nan":
-            case "+nan":
-            case "-nan":
-                return Double.NaN;
-            case "inf":
-            case "+inf":
-            case "infinity":
-            case "+infinity":
-                return Double.POSITIVE_INFINITY;
-            case "-inf":
-            case "-infinity":
-                return Double.NEGATIVE_INFINITY;
-            default:
-                throw new NumberFormatException();
-        }
+        String slc = s.toLowerCase();
+
+        if (slc == "nan" || slc == "+nan" || slc == "-nan") return Double.NaN;
+        if (slc == "inf" || slc == "+inf" || slc == "infinity" || slc == "+infinity") return Double.POSITIVE_INFINITY;
+        if (slc == "-inf" || slc == "-infinity") return Double.NEGATIVE_INFINITY;
+
+        throw new NumberFormatException();
     }
 
     /**
