@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
  * the counterpart of the CPython <code>Py_buffer</code> struct. Several concrete types implement
  * this interface in order to provide tailored support for different storage organisations.
  */
-public interface PyBuffer extends PyBUF, BufferProtocol, AutoCloseable {
+public interface PyBuffer extends PyBUF, BufferProtocol {
 
     /*
      * The different behaviours required as the actual structure of the buffer changes (from one
@@ -186,7 +186,6 @@ public interface PyBuffer extends PyBUF, BufferProtocol, AutoCloseable {
     void release();
 
     /** An alias for {@link #release()} to satisfy {@link AutoCloseable}. */
-    @Override
     void close();
 
     /**

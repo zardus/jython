@@ -1,6 +1,5 @@
 package org.python.util;
 
-import java.io.Closeable;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Properties;
@@ -28,7 +27,7 @@ import org.python.core.PyFileReader;
  * The PythonInterpreter class is a standard wrapper for a Jython interpreter for embedding in a
  * Java application.
  */
-public class PythonInterpreter implements AutoCloseable, Closeable {
+public class PythonInterpreter {
 
     // Defaults if the interpreter uses thread-local state
     protected PySystemState systemState;
@@ -409,7 +408,6 @@ public class PythonInterpreter implements AutoCloseable, Closeable {
         sys.cleanup();
     }
 
-    @Override
     public void close() {
         if (!closed) {
             closed = true;

@@ -17,7 +17,7 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import org.python.util.PythonInterpreter;
 
-public class PyScriptEngine extends AbstractScriptEngine implements Compilable, Invocable, AutoCloseable {
+public class PyScriptEngine extends AbstractScriptEngine implements Compilable, Invocable {
 
     private final PythonInterpreter interp;
     private final ScriptEngineFactory factory;
