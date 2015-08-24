@@ -1133,7 +1133,10 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
 
             } else {
                 // Access the bytes through the abstract API of the BufferProtocol
-                try (PyBuffer pybuf = ((BufferProtocol)input).getBuffer(PyBUF.STRIDED_RO)) {
+                PyBuffer pybuf = null;
+
+                try {
+                    pybuf = ((BufferProtocol)input).getBuffer(PyBUF.STRIDED_RO);
                     if (pybuf.getNdim() == 1) {
                         if (pybuf.getStrides()[0] == 1) {
                             // Data are contiguous in the buffer
@@ -1148,6 +1151,10 @@ public class PyArray extends PySequence implements Cloneable, BufferProtocol, Tr
                         // Currently don't support n-dimensional sources
                         throw Py.ValueError("multi-dimensional buffer not supported");
                     }
+                }
+                finally
+                {
+                    if (pybuf != null) pybuf.close();
                 }
             }
 

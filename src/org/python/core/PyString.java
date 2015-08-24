@@ -808,8 +808,14 @@ public class PyString extends PyBaseString implements BufferProtocol {
             return ((PyString)obj).getString();
         } else if (obj instanceof BufferProtocol) {
             // Other object with buffer API: briefly access the buffer
-            try (PyBuffer buf = ((BufferProtocol)obj).getBuffer(PyBUF.FULL_RO)) {
+            PyBuffer buf = null;
+            try {
+                buf = ((BufferProtocol)obj).getBuffer(PyBUF.FULL_RO);
                 return buf.toString();
+            }
+            finally
+            {
+                if (buf != null) buf.close();
             }
         } else {
             return null;

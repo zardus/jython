@@ -873,8 +873,14 @@ public class PyUnicode extends PyString implements Iterable {
             return new PyUnicode(((PyString)o).getString(), true);
         } else if (o instanceof BufferProtocol) {
             // PyByteArray, PyMemoryView, Py2kBuffer ...
-            try (PyBuffer buf = ((BufferProtocol)o).getBuffer(PyBUF.FULL_RO)) {
+            PyBuffer buf = null;
+            try {
+                buf = ((BufferProtocol)o).getBuffer(PyBUF.FULL_RO);
                 return new PyUnicode(buf.toString(), true);
+            }
+            finally
+            {
+                if (buf != null) buf.close();
             }
         } else {
             // o is some type not allowed:

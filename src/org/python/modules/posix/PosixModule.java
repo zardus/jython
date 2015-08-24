@@ -1035,7 +1035,9 @@ public class PosixModule implements ClassDictInit {
             "Write a string to a file descriptor.");
     public static int write(PyObject fd, BufferProtocol bytes) {
         // Get a buffer view: we can cope with N-dimensional data, but not strided data.
-        try (PyBuffer buf = bytes.getBuffer(PyBUF.ND)) {
+        PyBuffer buf = null;
+        try {
+            buf = bytes.getBuffer(PyBUF.ND);
             // Get a ByteBuffer of that data, setting the position and limit to the real data.
             ByteBuffer bb = buf.getNIOByteBuffer();
             Object javaobj = fd.__tojava__(RawIOBase.class);
@@ -1048,6 +1050,10 @@ public class PosixModule implements ClassDictInit {
             } else {
                 return posix.write(getFD(fd).getIntFD(), bb, bb.position());
             }
+        }
+        finally
+        {
+            if (buf != null) buf.close();
         }
     }
 

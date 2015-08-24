@@ -738,11 +738,23 @@ public class PyBufferTest extends TestCase {
         BufferProtocol sub = test.subject;
 
         // The object will be exporting test.view and N other views we don't know about
-        try (PyBuffer c = sub.getBuffer(flags)) {   // = N+1 exports
-            try (PyBuffer b = sub.getBuffer(PyBUF.FULL_RO); PyBuffer d =c.getBuffer(flags)) {
+        PyBuffer c = null;
+        try {
+            c = sub.getBuffer(flags);// = N+1 exports
+            PyBuffer b = null;
+            try {
+                b = sub.getBuffer(PyBUF.FULL_RO); PyBuffer d =c.getBuffer(flags);
                 checkExporting(sub);// = N+3 exports
             }
+            finally
+            {
+                if (b != null) b.close();
+            }
             checkExporting(sub);                    // = N+1 exports
+        }
+        finally
+        {
+            if (c != null) c.close();
         }
         checkExporting(sub);                        // = N export
     }

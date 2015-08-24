@@ -574,8 +574,9 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      * @throws PyException (SliceSizeError) if the value size is inconsistent with an extended slice
      */
     private void setslice(int start, int stop, int step, BufferProtocol value) throws PyException {
-
-        try (PyBuffer view = value.getBuffer(PyBUF.FULL_RO)) {
+        PyBuffer view = null;
+        try {
+            view = value.getBuffer(PyBUF.FULL_RO);
 
             int len = view.getLen();
 
@@ -595,6 +596,10 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
                     storage[io] = view.byteAt(j);    // Assign this[i] = value[j]
                 }
             }
+        }
+        finally
+        {
+            if (view != null) view.close();
         }
     }
 
@@ -2056,7 +2061,9 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
     final PyByteArray bytearray_translate(PyObject table, PyObject deletechars) {
 
         // Work with the translation table (if there is one) as a PyBuffer view.
-        try (PyBuffer tab = getTranslationTable(table)) {
+        PyBuffer tab = null;
+        try {
+            tab = getTranslationTable(table);
 
             // Accumulate the result here
             PyByteArray result = new PyByteArray();
@@ -2066,7 +2073,9 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
             if (deletechars != null) {
 
                 // Work with the deletion characters as a buffer too.
-                try (PyBuffer d = getViewOrError(deletechars)) {
+                PyBuffer d = null;
+                try {
+                    d = getViewOrError(deletechars);
                     // Use a ByteSet to express which bytes to delete
                     ByteSet del = new ByteSet(d);
                     int limit = offset + size;
@@ -2088,6 +2097,10 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
                         }
                     }
                 }
+                finally
+                {
+                    if (d != null) d.close();
+                }
 
             } else {
                 // No deletion set.
@@ -2105,6 +2118,10 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
             }
 
             return result;
+        }
+        finally
+        {
+            if (tab != null) tab.close();
         }
     }
 

@@ -502,9 +502,15 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
 
         } else if (obj instanceof BufferProtocol) {
             // Try to get a byte-oriented buffer
-            try (PyBuffer buf = ((BufferProtocol)obj).getBuffer(PyBUF.FULL_RO)) {
+            PyBuffer buf = null;
+            try {
+                buf = ((BufferProtocol)obj).getBuffer(PyBUF.FULL_RO);
                 // ... and treat those bytes as a String
                 return buf.toString();
+            }
+            finally
+            {
+                if (buf != null) buf.close();
             }
         }
 

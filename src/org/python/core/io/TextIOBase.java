@@ -115,7 +115,9 @@ public abstract class TextIOBase extends IOBase {
             return read.length();
 
         } else if (buf instanceof BufferProtocol) {
-            try (PyBuffer view = ((BufferProtocol)buf).getBuffer(PyBUF.FULL_RO)) {
+            PyBuffer view = null;
+            try {
+                view = ((BufferProtocol)buf).getBuffer(PyBUF.FULL_RO);
                 if (view.isReadonly()) {
                     // More helpful than falling through to CPython message
                     throw Py.TypeError("cannot read into read-only " + buf.getType().fastGetName());
@@ -128,6 +130,10 @@ public abstract class TextIOBase extends IOBase {
                     }
                     return read.length();
                 }
+            }
+            finally
+            {
+                if (view != null) view.close();
             }
         }
 
